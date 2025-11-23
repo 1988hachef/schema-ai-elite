@@ -13,7 +13,11 @@ interface Message {
   content: string;
 }
 
-const ChatInterface = () => {
+interface ChatInterfaceProps {
+  analysisContext?: string;
+}
+
+const ChatInterface = ({ analysisContext }: ChatInterfaceProps) => {
   const { t, language } = useLanguage();
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
@@ -30,7 +34,7 @@ const ChatInterface = () => {
 
     try {
       const { data, error } = await supabase.functions.invoke('chat-schematic', {
-        body: { message: input, language, history: messages }
+        body: { message: input, language, history: messages, context: analysisContext }
       });
 
       if (error) throw error;
@@ -55,20 +59,20 @@ const ChatInterface = () => {
     <>
       <Button
         onClick={() => setIsOpen(true)}
-        className="fixed bottom-8 right-8 h-16 w-16 rounded-full gradient-blue glow-blue shadow-lg animate-float z-50"
+        className="fixed bottom-4 right-4 h-12 w-12 rounded-full gradient-blue shadow-lg animate-float z-50"
       >
-        <MessageCircle className="h-7 w-7" />
+        <MessageCircle className="h-5 w-5" />
       </Button>
 
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            initial={{ opacity: 0, scale: 0.9, y: 20 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.9, y: 20 }}
-            className="fixed bottom-28 right-8 z-50"
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            className="fixed inset-0 flex items-center justify-center z-50 p-4 bg-background/80 backdrop-blur-sm"
           >
-            <Card className="glass w-96 h-[500px] flex flex-col border-2 border-electric-blue/30">
+            <Card className="glass w-full max-w-2xl h-[600px] flex flex-col border-2 border-electric-blue/30 shadow-2xl">
               <div className="flex items-center justify-between p-4 border-b border-border/50">
                 <h3 className="font-bold text-lg text-electric-blue">{t.chat}</h3>
                 <Button 

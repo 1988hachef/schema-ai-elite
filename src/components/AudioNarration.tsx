@@ -76,67 +76,50 @@ const AudioNarration = ({ sections }: AudioNarrationProps) => {
   }, []);
 
   return (
-    <Card className="glass p-6 sticky bottom-4 left-0 right-0 z-40">
-      <div className="flex flex-col gap-4">
-        <div className="flex items-center justify-between">
-          <h3 className="text-lg font-bold text-electric-blue">
-            {t.audioNarration}
-          </h3>
-          <div className="flex items-center gap-2">
-            <span className="text-sm text-muted-foreground">{t.speed}:</span>
-            <span className="text-sm font-medium text-primary">{speed[0]}x</span>
-          </div>
-        </div>
+    <div className="fixed bottom-4 left-4 z-40 glass p-3 rounded-xl border border-gold/20">
+      <div className="flex items-center gap-2">
+        <Button
+          size="icon"
+          onClick={() => (isPlaying ? pause() : (window.speechSynthesis.paused ? resume() : speak()))}
+          className="h-10 w-10 rounded-full gradient-blue"
+        >
+          {isPlaying ? (
+            <Pause className="h-4 w-4" />
+          ) : (
+            <Play className="h-4 w-4 ml-0.5" />
+          )}
+        </Button>
 
-        <div className="flex items-center gap-3">
-          <Button
-            size="icon"
-            variant="outline"
-            onClick={skipBackward}
-            className="glass border-border/50"
-          >
-            <SkipBack className="h-5 w-5" />
-          </Button>
+        <Button
+          size="icon"
+          variant="ghost"
+          onClick={skipBackward}
+          className="h-8 w-8"
+        >
+          <SkipBack className="h-3 w-3" />
+        </Button>
 
-          <Button
-            size="icon"
-            onClick={() => (isPlaying ? pause() : (window.speechSynthesis.paused ? resume() : speak()))}
-            className="h-14 w-14 rounded-full gradient-blue glow-blue"
-          >
-            {isPlaying ? (
-              <Pause className="h-6 w-6" />
-            ) : (
-              <Play className="h-6 w-6 ml-1" />
-            )}
-          </Button>
+        <Button
+          size="icon"
+          variant="ghost"
+          onClick={skipForward}
+          className="h-8 w-8"
+        >
+          <SkipForward className="h-3 w-3" />
+        </Button>
 
-          <Button
-            size="icon"
-            variant="outline"
-            onClick={skipForward}
-            className="glass border-border/50"
-          >
-            <SkipForward className="h-5 w-5" />
-          </Button>
-        </div>
-
-        <div className="space-y-2">
+        <div className="w-24">
           <Slider
             value={speed}
             onValueChange={setSpeed}
             min={0.75}
             max={1.5}
             step={0.25}
-            className="w-full"
           />
-          <div className="flex justify-between text-xs text-muted-foreground">
-            <span>0.75x</span>
-            <span>1.0x</span>
-            <span>1.5x</span>
-          </div>
         </div>
+        <span className="text-xs text-muted-foreground min-w-[2.5rem]">{speed[0]}x</span>
       </div>
-    </Card>
+    </div>
   );
 };
 

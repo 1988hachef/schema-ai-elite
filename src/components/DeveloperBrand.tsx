@@ -4,11 +4,11 @@ const DeveloperBrand = () => {
   const { t } = useLanguage();
   
   return (
-    <div className="fixed top-4 left-4 z-50 flex items-center gap-3 animate-slide-in">
-      <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-gold to-primary/80 flex items-center justify-center glow-gold">
-        <span className="text-2xl font-bold text-background">HO</span>
+    <div className="fixed top-3 left-3 z-50 flex items-center gap-2 animate-slide-in">
+      <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-gold to-primary/80 flex items-center justify-center">
+        <span className="text-sm font-bold text-background">HO</span>
       </div>
-      <span className="text-gold font-bold text-xl tracking-wider text-glow-gold">
+      <span className="text-gold font-semibold text-sm tracking-wide">
         {t.developer}
       </span>
     </div>
