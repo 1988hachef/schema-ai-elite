@@ -4,7 +4,6 @@ import LanguageSelector from '@/components/LanguageSelector';
 import AboutDialog from '@/components/AboutDialog';
 import InputButtons from '@/components/InputButtons';
 import AnalysisViewer from '@/components/AnalysisViewer';
-import ChatInterface from '@/components/ChatInterface';
 import { useLanguage } from '@/contexts/LanguageContext';
 
 const Index = () => {
@@ -40,8 +39,6 @@ const Index = () => {
           </div>
         )}
       </div>
-
-      <ChatInterface />
     </div>
   );
 };

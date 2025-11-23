@@ -5,6 +5,7 @@ import { Loader2, Download } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { supabase } from '@/integrations/supabase/client';
 import AudioNarration from './AudioNarration';
+import ChatInterface from './ChatInterface';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface AnalysisViewerProps {
@@ -138,6 +139,7 @@ const AnalysisViewer = ({ images }: AnalysisViewerProps) => {
       {analysis.length > 0 && (
         <>
           <AudioNarration sections={analysis} />
+          <ChatInterface analysisContext={analysis.map(s => `${s.title}: ${s.content}`).join('\n\n')} />
           
           <Button 
             className="w-full h-12 glass border-2 border-primary/30 hover:border-primary hover:glow-gold"

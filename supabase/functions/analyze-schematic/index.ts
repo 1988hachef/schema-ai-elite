@@ -19,9 +19,9 @@ serve(async (req) => {
     }
 
     const systemPrompt = {
-      ar: 'أنت مهندس كهربائي خبير متخصص فقط في تحليل المخططات الكهربائية. قم بتحليل المخطط خطوة بخطوة مع شرح كل مكون ووظيفته. استخدم عناوين ملونة واضحة. رفض أي طلبات غير متعلقة بالمخططات الكهربائية.',
-      fr: 'Vous êtes un ingénieur électricien expert spécialisé uniquement dans l\'analyse de schémas électriques. Analysez le schéma étape par étape en expliquant chaque composant et sa fonction. Utilisez des titres colorés clairs. Refusez toute demande non liée aux schémas électriques.',
-      en: 'You are an expert electrical engineer specialized ONLY in analyzing electrical schematics. Analyze the schematic step-by-step explaining each component and its function. Use clear colored titles. Refuse any requests not related to electrical schematics.'
+      ar: 'أنت مهندس كهربائي خبير متخصص فقط في تحليل المخططات الكهربائية بدقة واحترافية عالية. قدم تحليلاً شاملاً ومفصلاً ومنظماً لكل جزء من المخطط، مع شرح وافٍ لكل مكون ووظيفته وعلاقته بباقي المكونات. اجعل التحليل منطقياً ومتسلسلاً وسهل الفهم. رفض أي طلبات غير متعلقة بالمخططات الكهربائية.',
+      fr: 'Vous êtes un ingénieur électricien expert spécialisé uniquement dans l\'analyse précise et professionnelle de schémas électriques. Fournissez une analyse complète, détaillée et organisée de chaque partie du schéma, avec une explication approfondie de chaque composant, sa fonction et sa relation avec les autres composants. Rendez l\'analyse logique, séquentielle et facile à comprendre. Refusez toute demande non liée aux schémas électriques.',
+      en: 'You are an expert electrical engineer specialized ONLY in precise and professional analysis of electrical schematics. Provide a comprehensive, detailed, and organized analysis of each part of the schematic, with thorough explanation of each component, its function, and its relationship with other components. Make the analysis logical, sequential, and easy to understand. Refuse any requests not related to electrical schematics.'
     };
 
     const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
@@ -42,7 +42,7 @@ serve(async (req) => {
             content: [
               {
                 type: 'text',
-                text: 'Analyze this electrical schematic in detail. Break it down into sections with colored titles: 1) Power Supply (red), 2) Control Circuit (blue), 3) Signal Path (green), 4) Protection Devices (yellow). For each section, explain components and connections.'
+                text: 'Provide a comprehensive, professional electrical schematic analysis. Include: 1) Overview of the circuit purpose and main function, 2) Detailed identification of every component with specifications, 3) Complete explanation of circuit operation flow, 4) Analysis of power distribution paths, 5) Control logic and signal flow explanation, 6) Safety and protection mechanisms, 7) Component interconnections and dependencies, 8) Technical calculations if applicable. Make it highly detailed, organized, and professional.'
               },
               ...images.map((img: string) => ({
                 type: 'image_url',
@@ -63,29 +63,14 @@ serve(async (req) => {
     const data = await response.json();
     const content = data.choices[0].message.content;
 
-    // Parse the response into colored sections
+    // Return single comprehensive analysis without colored sections
     const sections = [
       {
-        title: language === 'ar' ? 'إمداد الطاقة' : language === 'fr' ? 'Alimentation' : 'Power Supply',
-        content: content.split('\n\n')[0] || content,
-        color: '#ef4444'
-      },
-      {
-        title: language === 'ar' ? 'دائرة التحكم' : language === 'fr' ? 'Circuit de contrôle' : 'Control Circuit',
-        content: content.split('\n\n')[1] || '',
-        color: '#3b82f6'
-      },
-      {
-        title: language === 'ar' ? 'مسار الإشارة' : language === 'fr' ? 'Chemin du signal' : 'Signal Path',
-        content: content.split('\n\n')[2] || '',
-        color: '#22c55e'
-      },
-      {
-        title: language === 'ar' ? 'أجهزة الحماية' : language === 'fr' ? 'Dispositifs de protection' : 'Protection Devices',
-        content: content.split('\n\n')[3] || '',
-        color: '#eab308'
+        title: language === 'ar' ? 'التحليل الكامل' : language === 'fr' ? 'Analyse Complète' : 'Complete Analysis',
+        content: content,
+        color: '#D4AF37'
       }
-    ].filter(section => section.content);
+    ];
 
     return new Response(
       JSON.stringify({ sections }),

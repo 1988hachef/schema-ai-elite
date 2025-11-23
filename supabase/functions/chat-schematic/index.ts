@@ -11,7 +11,7 @@ serve(async (req) => {
   }
 
   try {
-    const { message, language, history } = await req.json();
+    const { message, language, history, context } = await req.json();
     const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
 
     if (!LOVABLE_API_KEY) {
@@ -19,15 +19,15 @@ serve(async (req) => {
     }
 
     const offTopicResponses = {
-      ar: 'أنا متخصص فقط في المخططات الكهربائية. من فضلك اسألني عن المخططات والدوائر الكهربائية.',
-      fr: 'Je suis spécialisé uniquement dans les schémas électriques. Veuillez me poser des questions sur les schémas et circuits électriques.',
-      en: 'I only specialize in electrical schematics. Please ask me about electrical schematics and circuits.'
+      ar: 'أنا متخصص فقط في المخططات الكهربائية',
+      fr: 'Je suis spécialisé uniquement dans les schémas électriques',
+      en: 'I only specialize in electrical schematics'
     };
 
     const creatorResponse = {
-      ar: 'تم تطوير هذا التطبيق بواسطة المهندس HACHEF OUSSAMA',
-      fr: 'Cette application a été développée par l\'ingénieur HACHEF OUSSAMA',
-      en: 'This application was developed by engineer HACHEF OUSSAMA'
+      ar: 'تم تطوير هذا التطبيق بواسطة HACHEF OUSSAMA',
+      fr: 'Cette application a été développée par HACHEF OUSSAMA',
+      en: 'This application was developed by HACHEF OUSSAMA'
     };
 
     // Check if asking about creator
@@ -43,10 +43,14 @@ serve(async (req) => {
       );
     }
 
+    const contextPrompt = context 
+      ? `\n\nPrevious Analysis Context:\n${context}\n\nUse this analysis as reference when answering questions about the schematic.`
+      : '';
+
     const systemPrompt = {
-      ar: 'أنت مساعد ذكاء اصطناعي متخصص فقط في المخططات الكهربائية. أجب فقط على الأسئلة المتعلقة بالمخططات الكهربائية والدوائر والمكونات الكهربائية. لأي سؤال آخر، اذكر أنك متخصص فقط في المخططات الكهربائية.',
-      fr: 'Vous êtes un assistant IA spécialisé uniquement dans les schémas électriques. Répondez uniquement aux questions liées aux schémas électriques, circuits et composants électriques. Pour toute autre question, mentionnez que vous êtes spécialisé uniquement dans les schémas électriques.',
-      en: 'You are an AI assistant specialized ONLY in electrical schematics. Only answer questions related to electrical schematics, circuits, and electrical components. For any other question, mention that you only specialize in electrical schematics.'
+      ar: `أنت مساعد ذكاء اصطناعي متخصص فقط في المخططات الكهربائية. أجب فقط على الأسئلة المتعلقة بالمخطط المرفوع بناءً على التحليل المتاح. إذا سُئلت عن من طور هذا التطبيق، أجب: "تم تطوير هذا التطبيق بواسطة HACHEF OUSSAMA". لأي سؤال خارج نطاق المخططات الكهربائية، أجب فقط: "أنا متخصص فقط في المخططات الكهربائية".${contextPrompt}`,
+      fr: `Vous êtes un assistant IA spécialisé uniquement dans les schémas électriques. Répondez uniquement aux questions liées au schéma téléchargé en vous basant sur l'analyse disponible. Si on vous demande qui a développé cette application, répondez : "Cette application a été développée par HACHEF OUSSAMA". Pour toute question hors du domaine des schémas électriques, répondez uniquement : "Je suis spécialisé uniquement dans les schémas électriques".${contextPrompt}`,
+      en: `You are an AI assistant specialized ONLY in electrical schematics. Answer only questions related to the uploaded schematic based on the available analysis. If asked who developed this app, answer: "This application was developed by HACHEF OUSSAMA". For any question outside electrical schematics, answer only: "I only specialize in electrical schematics".${contextPrompt}`
     };
 
     const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
