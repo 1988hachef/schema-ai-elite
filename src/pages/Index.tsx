@@ -1,12 +1,47 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import { useState } from 'react';
+import DeveloperBrand from '@/components/DeveloperBrand';
+import LanguageSelector from '@/components/LanguageSelector';
+import AboutDialog from '@/components/AboutDialog';
+import InputButtons from '@/components/InputButtons';
+import AnalysisViewer from '@/components/AnalysisViewer';
+import ChatInterface from '@/components/ChatInterface';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 const Index = () => {
+  const { t } = useLanguage();
+  const [selectedImages, setSelectedImages] = useState<File[]>([]);
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background">
-      <div className="text-center">
-        <h1 className="mb-4 text-4xl font-bold">Welcome to Your Blank App</h1>
-        <p className="text-xl text-muted-foreground">Start building your amazing project here!</p>
+    <div className="min-h-screen bg-background carbon-texture">
+      <DeveloperBrand />
+      
+      <div className="fixed top-4 right-4 flex gap-2 z-50 animate-slide-in">
+        <AboutDialog />
+        <LanguageSelector />
       </div>
+
+      <div className="container max-w-6xl mx-auto px-4 pt-24 pb-32">
+        <div className="text-center mb-12 space-y-4 animate-slide-up">
+          <h1 className="text-4xl md:text-6xl font-bold text-primary text-glow-gold">
+            {t.appName}
+          </h1>
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+            {t.description[useLanguage().language]}
+          </p>
+        </div>
+
+        {selectedImages.length === 0 ? (
+          <div className="animate-slide-up" style={{ animationDelay: '0.2s' }}>
+            <InputButtons onImageCapture={setSelectedImages} />
+          </div>
+        ) : (
+          <div className="animate-slide-up" style={{ animationDelay: '0.3s' }}>
+            <AnalysisViewer images={selectedImages} />
+          </div>
+        )}
+      </div>
+
+      <ChatInterface />
     </div>
   );
 };
