@@ -38,26 +38,26 @@ const InputButtons = ({ onImageCapture }: InputButtonsProps) => {
     <div className="flex flex-col gap-4 w-full max-w-md mx-auto">
       <Button 
         onClick={handleCamera}
-        className="h-16 glass border-2 border-electric-blue/30 hover:border-electric-blue hover:glow-blue transition-all duration-300 group"
+        className="h-16 md:h-20 glass border-2 border-electric-blue/30 hover:border-electric-blue hover:glow-blue transition-all duration-300 group active:scale-95"
       >
-        <Camera className="mr-3 h-6 w-6 text-electric-blue group-hover:scale-110 transition-transform" />
-        <span className="text-lg font-semibold">{t.camera}</span>
+        <Camera className="mr-3 h-7 w-7 text-electric-blue group-hover:scale-110 transition-transform" />
+        <span className="text-xl font-semibold">{t.camera}</span>
       </Button>
 
       <Button 
         onClick={handleImages}
-        className="h-16 glass border-2 border-primary/30 hover:border-primary hover:glow-gold transition-all duration-300 group"
+        className="h-16 md:h-20 glass border-2 border-primary/30 hover:border-primary hover:glow-gold transition-all duration-300 group active:scale-95"
       >
-        <Image className="mr-3 h-6 w-6 text-primary group-hover:scale-110 transition-transform" />
-        <span className="text-lg font-semibold">{t.uploadImages}</span>
+        <Image className="mr-3 h-7 w-7 text-primary group-hover:scale-110 transition-transform" />
+        <span className="text-xl font-semibold">{t.uploadImages}</span>
       </Button>
 
       <Button 
         onClick={handlePDF}
-        className="h-16 glass border-2 border-accent/30 hover:border-accent hover:glow-blue transition-all duration-300 group"
+        className="h-16 md:h-20 glass border-2 border-accent/30 hover:border-accent hover:glow-blue transition-all duration-300 group active:scale-95"
       >
-        <FileText className="mr-3 h-6 w-6 text-accent group-hover:scale-110 transition-transform" />
-        <span className="text-lg font-semibold">{t.uploadPDF}</span>
+        <FileText className="mr-3 h-7 w-7 text-accent group-hover:scale-110 transition-transform" />
+        <span className="text-xl font-semibold">{t.uploadPDF}</span>
       </Button>
 
       <input

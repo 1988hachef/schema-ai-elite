@@ -4,13 +4,16 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  DialogClose,
 } from './ui/dialog';
 import { Button } from './ui/button';
-import { Info } from 'lucide-react';
+import { Info, ArrowLeft } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 
 const AboutDialog = () => {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
+
+  const backLabel = language === 'ar' ? 'رجوع' : language === 'fr' ? 'Retour' : 'Back';
 
   return (
     <Dialog>
@@ -51,6 +54,15 @@ const AboutDialog = () => {
             <p className="text-primary font-bold text-lg">
               Developer: {t.developer}
             </p>
+          </div>
+
+          <div className="pt-4 flex justify-center">
+            <DialogClose asChild>
+              <Button variant="outline" className="glass border-border/50">
+                <ArrowLeft className="h-4 w-4 mr-2" />
+                <span>{backLabel}</span>
+              </Button>
+            </DialogClose>
           </div>
         </div>
       </DialogContent>

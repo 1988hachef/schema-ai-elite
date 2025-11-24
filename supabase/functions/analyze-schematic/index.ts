@@ -42,7 +42,7 @@ serve(async (req) => {
             content: [
               {
                 type: 'text',
-                text: 'Provide a comprehensive, professional electrical schematic analysis. Include: 1) Overview of the circuit purpose and main function, 2) Detailed identification of every component with specifications, 3) Complete explanation of circuit operation flow, 4) Analysis of power distribution paths, 5) Control logic and signal flow explanation, 6) Safety and protection mechanisms, 7) Component interconnections and dependencies, 8) Technical calculations if applicable. Make it highly detailed, organized, and professional.'
+                text: 'Provide a highly detailed, engineering-level electrical schematic analysis. Organize the response into clear, numbered sections with strong titles. For each section: (1) identify precisely which component or zone of the schematic is being discussed, (2) explain its role and how current/signal flows through it, (3) describe how it connects to previous and next stages, (4) follow the power/control/signal paths step by step from source to load, and (5) highlight all protection and safety aspects. The style must be professional, structured, and suitable for electrical engineers.'
               },
               ...images.map((img: string) => ({
                 type: 'image_url',
