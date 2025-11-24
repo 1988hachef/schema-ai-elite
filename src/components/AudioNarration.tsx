@@ -4,6 +4,7 @@ import { Slider } from './ui/slider';
 import { Play, Pause, SkipBack, SkipForward } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Card } from './ui/card';
+import { toast } from 'sonner';
 
 interface AudioNarrationProps {
   sections: { title: string; content: string }[];
@@ -27,19 +28,30 @@ const AudioNarration = ({ sections }: AudioNarrationProps) => {
   };
 
   const speak = () => {
-    if ('speechSynthesis' in window) {
-      const text = sections.map(s => `${s.title}. ${s.content}`).join('. ');
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.lang = language === 'ar' ? 'ar-SA' : language === 'fr' ? 'fr-FR' : 'en-US';
-      utterance.rate = speed[0];
-      utterance.voice = getVoice();
-      
-      utterance.onend = () => setIsPlaying(false);
-      
-      utteranceRef.current = utterance;
-      window.speechSynthesis.speak(utterance);
-      setIsPlaying(true);
+    if (!('speechSynthesis' in window)) {
+      const message =
+        language === 'ar'
+          ? 'الشرح الصوتي غير مدعوم على هذا الجهاز.'
+          : language === 'fr'
+          ? "La synthèse vocale n'est pas prise en charge sur cet appareil."
+          : 'Audio narration is not supported on this device.';
+      toast.error(message);
+      return;
     }
+
+    window.speechSynthesis.cancel();
+
+    const text = sections.map(s => `${s.title}. ${s.content}`).join('. ');
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = language === 'ar' ? 'ar-SA' : language === 'fr' ? 'fr-FR' : 'en-US';
+    utterance.rate = speed[0];
+    utterance.voice = getVoice();
+    
+    utterance.onend = () => setIsPlaying(false);
+    
+    utteranceRef.current = utterance;
+    window.speechSynthesis.speak(utterance);
+    setIsPlaying(true);
   };
 
   const pause = () => {

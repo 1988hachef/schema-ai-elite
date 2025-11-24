@@ -10,6 +10,10 @@ const Index = () => {
   const { t } = useLanguage();
   const [selectedImages, setSelectedImages] = useState<File[]>([]);
 
+  const handleReset = () => {
+    setSelectedImages([]);
+  };
+
   return (
     <div className="min-h-screen bg-background carbon-texture">
       <DeveloperBrand />
@@ -35,7 +39,7 @@ const Index = () => {
           </div>
         ) : (
           <div className="animate-slide-up" style={{ animationDelay: '0.3s' }}>
-            <AnalysisViewer images={selectedImages} />
+            <AnalysisViewer images={selectedImages} onReset={handleReset} />
           </div>
         )}
       </div>
