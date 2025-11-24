@@ -80,22 +80,59 @@ const AnalysisViewer = ({ images, onReset }: AnalysisViewerProps) => {
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    // Simple animation: draw a box that grows
-    const x = 50 + (index * 100) % 400;
-    const y = 50 + Math.floor(index / 4) * 100;
-    
-    ctx.strokeStyle = section.color;
-    ctx.lineWidth = 3;
-    ctx.strokeRect(x, y, 80, 80);
-    
-    // Draw arrow
-    ctx.beginPath();
-    ctx.moveTo(x + 40, y + 80);
-    ctx.lineTo(x + 40, y + 120);
-    ctx.lineTo(x + 50, y + 110);
-    ctx.moveTo(x + 40, y + 120);
-    ctx.lineTo(x + 30, y + 110);
-    ctx.stroke();
+    const img = new Image();
+    img.onload = () => {
+      // Set canvas to match image dimensions
+      canvas.width = img.width;
+      canvas.height = img.height;
+      
+      const sectionCount = analysis.length;
+      const segmentHeight = canvas.height / sectionCount;
+      const y = index * segmentHeight;
+      
+      // Draw colored frame around section area
+      ctx.strokeStyle = section.color;
+      ctx.lineWidth = 4;
+      ctx.shadowColor = section.color;
+      ctx.shadowBlur = 10;
+      ctx.strokeRect(20, y + 20, canvas.width - 40, segmentHeight - 40);
+      
+      // Draw section number badge
+      ctx.fillStyle = section.color;
+      ctx.fillRect(30, y + 30, 40, 40);
+      ctx.fillStyle = '#000000';
+      ctx.font = 'bold 24px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText((index + 1).toString(), 50, y + 50);
+      
+      // Draw arrow pointing to section
+      const arrowX = canvas.width - 60;
+      const arrowY = y + segmentHeight / 2;
+      ctx.strokeStyle = section.color;
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.moveTo(arrowX, arrowY - 30);
+      ctx.lineTo(arrowX, arrowY + 30);
+      ctx.lineTo(arrowX + 20, arrowY);
+      ctx.closePath();
+      ctx.fill();
+      
+      // Draw flow line for current path
+      if (index < sectionCount - 1) {
+        ctx.strokeStyle = section.color;
+        ctx.lineWidth = 2;
+        ctx.setLineDash([5, 5]);
+        ctx.beginPath();
+        ctx.moveTo(canvas.width / 2, y + segmentHeight - 20);
+        ctx.lineTo(canvas.width / 2, y + segmentHeight + 20);
+        ctx.stroke();
+        ctx.setLineDash([]);
+      }
+      
+      ctx.shadowBlur = 0;
+    };
+    img.src = currentImage;
   };
 
   const handleExportPdf = () => {
@@ -112,11 +149,22 @@ const AnalysisViewer = ({ images, onReset }: AnalysisViewerProps) => {
       content: section.content.replace(/</g, '&lt;').replace(/>/g, '&gt;'),
     }));
 
+    const imagesHtml = imageDataList
+      .map((img, idx) => `
+        <div style="margin-bottom:24px;page-break-inside:avoid;">
+          <h3 style="font-size:18px;font-weight:700;margin-bottom:8px;">
+            ${language === 'ar' ? `المخطط ${idx + 1}` : language === 'fr' ? `Schéma ${idx + 1}` : `Schematic ${idx + 1}`}
+          </h3>
+          <img src="${img}" style="max-width:100%;height:auto;border:2px solid #D4AF37;border-radius:8px;" />
+        </div>
+      `)
+      .join('');
+
     const sectionsHtml = safeSections
       .map(
-        (section) => `
-        <section style="margin-bottom:24px;">
-          <h2 style="font-size:20px;font-weight:700;margin-bottom:8px;">${section.title}</h2>
+        (section, idx) => `
+        <section style="margin-bottom:24px;page-break-inside:avoid;">
+          <h2 style="font-size:20px;font-weight:700;margin-bottom:8px;color:#D4AF37;">${idx + 1}. ${section.title}</h2>
           <p style="white-space:pre-wrap;line-height:1.7;font-size:14px;">${section.content}</p>
         </section>`
       )
@@ -129,14 +177,34 @@ const AnalysisViewer = ({ images, onReset }: AnalysisViewerProps) => {
           <meta charset="utf-8" />
           <title>${t.appName}</title>
           <style>
+            @media print {
+              body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            }
             body {
               font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
               padding: 32px;
+              max-width: 1200px;
+              margin: 0 auto;
+            }
+            h1 { 
+              font-size: 28px; 
+              font-weight: 800; 
+              margin-bottom: 8px;
+              color: #D4AF37;
+            }
+            .subtitle {
+              font-size: 14px;
+              color: #666;
+              margin-bottom: 24px;
+              font-style: italic;
             }
           </style>
         </head>
         <body>
-          <h1 style="font-size:24px;font-weight:800;margin-bottom:16px;">${t.appName}</h1>
+          <h1>${t.appName}</h1>
+          <p class="subtitle">${language === 'ar' ? 'تحليل بواسطة المهندس الكهربائي HACHEF OUSSAMA' : language === 'fr' ? 'Analysé par l\'ingénieur électricien HACHEF OUSSAMA' : 'Analyzed by Electrical Engineer HACHEF OUSSAMA'}</p>
+          ${imagesHtml}
+          <hr style="border:none;border-top:2px solid #D4AF37;margin:32px 0;" />
           ${sectionsHtml}
         </body>
       </html>
