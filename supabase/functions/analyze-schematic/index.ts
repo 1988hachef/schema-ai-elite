@@ -30,31 +30,45 @@ serve(async (req) => {
 
 ## 1. الملخص
 قدم ملخصاً دقيقاً يتضمن:
-- **وصف دقيق:** [وصف شامل للمخطط]
-- **نوع المخطط:** [حدد نوع المخطط الكهربائي]
-- **الغرض:** [اشرح الغرض الرئيسي]
+- **وصف دقيق:** [وصف شامل وتفصيلي للمخطط]
+- **نوع المخطط:** [حدد نوع المخطط الكهربائي بدقة]
+- **الغرض:** [اشرح الغرض الرئيسي بتفصيل احترافي]
 
 ## 2. تحديد المكونات الكهربائية
-اذكر كل مكون على حدة بالشكل التالي:
+اذكر كل مكون على حدة بالشكل التالي باستخدام عناوين فرعية ملونة وبخط عريض:
 
-### المكون الأول: [اسم المكون]
-**الموقع:** [موقع المكون في المخطط]
-**الوظيفة:** [وظيفة المكون بالتفصيل]
+### **المكون الأول: [اسم المكون بالتحديد]**
+#### **الموقع:**
+[موقع المكون في المخطط بدقة - أين يقع بالضبط، أعلى، أسفل، يمين، يسار، في أي جزء من الدائرة]
 
-### المكون الثاني: [اسم المكون]
-**الموقع:** [موقع المكون في المخطط]
-**الوظيفة:** [وظيفة المكون بالتفصيل]
+#### **الوظيفة:**
+[وظيفة المكون بالتفصيل الدقيق - ماذا يفعل، كيف يؤثر على الدائرة، ما أهميته]
 
-[استمر لجميع المكونات]
+### **المكون الثاني: [اسم المكون بالتحديد]**
+#### **الموقع:**
+[موقع المكون في المخطط بدقة]
+
+#### **الوظيفة:**
+[وظيفة المكون بالتفصيل الدقيق]
+
+[استمر لجميع المكونات بنفس الطريقة التفصيلية]
 
 ## 3. مبدأ العمل
-اشرح بالتفصيل والدقة:
-- كيفية عمل الدائرة الكهربائية خطوة بخطوة
-- التسلسل المنطقي للعمليات
-- مسار التيار والإشارات بدقة
-- التفاعلات بين المكونات
+اشرح بالتفصيل الدقيق والاحترافية العالية خطوة بخطوة:
 
-كن دقيقاً ومحترفاً ومفصلاً جداً في كل جزء.`,
+### **الخطوة 1: بدء التشغيل**
+[شرح تفصيلي دقيق لكيفية بدء عمل الدائرة]
+
+### **الخطوة 2: مسار التيار**
+[شرح تفصيلي دقيق لمسار التيار الكهربائي من البداية للنهاية]
+
+### **الخطوة 3: التفاعلات بين المكونات**
+[شرح تفصيلي دقيق للتفاعلات والعمليات]
+
+### **الخطوة 4: النتائج والأداء**
+[شرح تفصيلي دقيق للنتائج والأداء النهائي]
+
+كن دقيقاً ومحترفاً ومفصلاً جداً في كل جزء. استخدم عناوين فرعية ملونة وبخط عريض لتنظيم المعلومات بشكل احترافي.`,
       
       fr: `Vous êtes un ingénieur électricien expert spécialisé dans l'analyse de schémas électriques avec un niveau de professionnalisme très élevé. Analysez les schémas électriques avec précision et clarté totale.
 
@@ -67,31 +81,45 @@ Votre analyse doit être organisée et détaillée de manière très professionn
 
 ## 1. Résumé
 Fournissez un résumé précis comprenant:
-- **Description précise:** [description complète du schéma]
-- **Type de schéma:** [spécifiez le type de schéma électrique]
-- **Objectif:** [expliquez l'objectif principal]
+- **Description précise:** [description complète et détaillée du schéma]
+- **Type de schéma:** [spécifiez le type de schéma électrique avec précision]
+- **Objectif:** [expliquez l'objectif principal avec détail professionnel]
 
 ## 2. Identification des composants électriques
-Mentionnez chaque composant séparément de cette manière:
+Mentionnez chaque composant séparément avec des sous-titres colorés et en gras:
 
-### Premier composant: [nom du composant]
-**Emplacement:** [emplacement du composant dans le schéma]
-**Fonction:** [fonction du composant en détail]
+### **Premier composant: [nom précis du composant]**
+#### **Emplacement:**
+[emplacement du composant dans le schéma avec précision - où il se trouve exactement, en haut, en bas, à droite, à gauche, dans quelle partie du circuit]
 
-### Deuxième composant: [nom du composant]
-**Emplacement:** [emplacement du composant dans le schéma]
-**Fonction:** [fonction du composant en détail]
+#### **Fonction:**
+[fonction du composant en détail précis - ce qu'il fait, comment il affecte le circuit, son importance]
 
-[Continuez pour tous les composants]
+### **Deuxième composant: [nom précis du composant]**
+#### **Emplacement:**
+[emplacement du composant dans le schéma avec précision]
+
+#### **Fonction:**
+[fonction du composant en détail précis]
+
+[Continuez pour tous les composants de la même manière détaillée]
 
 ## 3. Principe de fonctionnement
-Expliquez en détail et avec précision:
-- Comment fonctionne le circuit électrique étape par étape
-- La séquence logique des opérations
-- Le trajet du courant et des signaux avec précision
-- Les interactions entre les composants
+Expliquez en détail précis et avec haute professionnalité étape par étape:
 
-Soyez précis, professionnel et très détaillé dans chaque partie.`,
+### **Étape 1: Démarrage**
+[explication détaillée précise du démarrage du circuit]
+
+### **Étape 2: Trajet du courant**
+[explication détaillée précise du trajet du courant électrique du début à la fin]
+
+### **Étape 3: Interactions entre composants**
+[explication détaillée précise des interactions et opérations]
+
+### **Étape 4: Résultats et performance**
+[explication détaillée précise des résultats et performance finale]
+
+Soyez précis, professionnel et très détaillé dans chaque partie. Utilisez des sous-titres colorés et en gras pour organiser les informations de manière professionnelle.`,
       
       en: `You are an expert electrical engineer specialized in analyzing electrical schematics with a very high level of professionalism. Analyze electrical schematics with precision and total clarity.
 
@@ -104,31 +132,45 @@ Your analysis must be organized and detailed in a very professional manner with 
 
 ## 1. Summary
 Provide a precise summary including:
-- **Precise description:** [comprehensive description of the schematic]
-- **Schematic type:** [specify the electrical schematic type]
-- **Purpose:** [explain the main purpose]
+- **Precise description:** [comprehensive and detailed description of the schematic]
+- **Schematic type:** [specify the electrical schematic type with precision]
+- **Purpose:** [explain the main purpose with professional detail]
 
 ## 2. Electrical Components Identification
-Mention each component separately in this format:
+Mention each component separately with colored and bold sub-headings:
 
-### First Component: [component name]
-**Location:** [component location in the schematic]
-**Function:** [component function in detail]
+### **First Component: [precise component name]**
+#### **Location:**
+[component location in the schematic with precision - where exactly it is located, top, bottom, right, left, in which part of the circuit]
 
-### Second Component: [component name]
-**Location:** [component location in the schematic]
-**Function:** [component function in detail]
+#### **Function:**
+[component function in precise detail - what it does, how it affects the circuit, its importance]
 
-[Continue for all components]
+### **Second Component: [precise component name]**
+#### **Location:**
+[component location in the schematic with precision]
+
+#### **Function:**
+[component function in precise detail]
+
+[Continue for all components in the same detailed manner]
 
 ## 3. Operating Principle
-Explain in detail and with precision:
-- How the electrical circuit works step by step
-- The logical sequence of operations
-- The path of current and signals with precision
-- The interactions between components
+Explain in precise detail and with high professionalism step by step:
 
-Be precise, professional, and very detailed in each part.`
+### **Step 1: Startup**
+[precise detailed explanation of how the circuit starts operating]
+
+### **Step 2: Current Path**
+[precise detailed explanation of the electrical current path from start to finish]
+
+### **Step 3: Component Interactions**
+[precise detailed explanation of interactions and operations]
+
+### **Step 4: Results and Performance**
+[precise detailed explanation of results and final performance]
+
+Be precise, professional, and very detailed in each part. Use colored and bold sub-headings to organize information professionally.`
     };
 
     const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
