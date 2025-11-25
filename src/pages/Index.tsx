@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import DeveloperBrand from '@/components/DeveloperBrand';
 import LanguageSelector from '@/components/LanguageSelector';
-import AboutDialog from '@/components/AboutDialog';
 import InputButtons from '@/components/InputButtons';
 import AnalysisViewer from '@/components/AnalysisViewer';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -16,10 +15,7 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background carbon-texture">
-      <DeveloperBrand />
-      
-      <div className="fixed top-4 right-4 flex gap-2 z-50 animate-slide-in">
-        <AboutDialog />
+      <div className="fixed top-4 right-4 z-50 animate-slide-in">
         <LanguageSelector />
       </div>
 
@@ -43,6 +39,8 @@ const Index = () => {
           </div>
         )}
       </div>
+      
+      <DeveloperBrand />
     </div>
   );
 };
