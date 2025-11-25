@@ -18,13 +18,27 @@ const AudioNarration = ({ sections }: AudioNarrationProps) => {
 
   const getVoice = () => {
     const voices = window.speechSynthesis.getVoices();
-    if (language === 'ar') {
-      return voices.find(v => v.lang.startsWith('ar')) || voices[0];
-    } else if (language === 'fr') {
-      return voices.find(v => v.lang.startsWith('fr')) || voices[0];
-    } else {
-      return voices.find(v => v.lang.startsWith('en')) || voices[0];
+    if (!voices.length) return null;
+    
+    const langCode = language === 'ar' ? 'ar' : language === 'fr' ? 'fr' : 'en';
+    
+    // Try to find high-quality voices (prefer Microsoft, Google, or natural-sounding voices)
+    const highQualityVoices = voices.filter(v => 
+      v.lang.startsWith(langCode) && 
+      (v.name.includes('Microsoft') || 
+       v.name.includes('Google') || 
+       v.name.includes('Natural') ||
+       v.name.includes('Enhanced') ||
+       v.localService === false) // Online voices are often better quality
+    );
+    
+    if (highQualityVoices.length > 0) {
+      return highQualityVoices[0];
     }
+    
+    // Fallback to any voice matching the language
+    const matchingVoice = voices.find(v => v.lang.startsWith(langCode));
+    return matchingVoice || voices[0];
   };
 
   const speak = () => {
