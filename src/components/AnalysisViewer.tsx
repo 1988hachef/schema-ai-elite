@@ -1,12 +1,13 @@
 import { useEffect, useState, useRef } from 'react';
 import { Card } from './ui/card';
 import { Button } from './ui/button';
-import { Loader2, Download } from 'lucide-react';
+import { Loader2, Download, Save } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { supabase } from '@/integrations/supabase/client';
 import AudioNarration from './AudioNarration';
 import ChatInterface from './ChatInterface';
 import { motion, AnimatePresence } from 'framer-motion';
+import { toast } from 'sonner';
 
 interface AnalysisViewerProps {
   images: File[];
@@ -25,6 +26,7 @@ const AnalysisViewer = ({ images, onReset }: AnalysisViewerProps) => {
   const [analysis, setAnalysis] = useState<AnalysisSection[]>([]);
   const [currentImage, setCurrentImage] = useState<string>('');
   const [imageDataList, setImageDataList] = useState<string[]>([]);
+  const [isSaving, setIsSaving] = useState(false);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -133,6 +135,49 @@ const AnalysisViewer = ({ images, onReset }: AnalysisViewerProps) => {
       ctx.shadowBlur = 0;
     };
     img.src = currentImage;
+  };
+
+  const saveAnalysis = async () => {
+    if (!analysis.length) return;
+    
+    setIsSaving(true);
+    try {
+      const title = language === 'ar' 
+        ? `تحليل مخطط كهربائي - ${new Date().toLocaleDateString('ar-SA')}`
+        : language === 'fr'
+        ? `Analyse de schéma - ${new Date().toLocaleDateString('fr-FR')}`
+        : `Schematic Analysis - ${new Date().toLocaleDateString('en-US')}`;
+
+      const { error } = await supabase
+        .from('schematic_analyses')
+        .insert([{
+          title,
+          image_urls: imageDataList,
+          analysis_sections: analysis as any,
+          language
+        }]);
+
+      if (error) throw error;
+
+      toast.success(
+        language === 'ar'
+          ? 'تم حفظ التحليل بنجاح'
+          : language === 'fr'
+          ? 'Analyse enregistrée avec succès'
+          : 'Analysis saved successfully'
+      );
+    } catch (error) {
+      console.error('Save error:', error);
+      toast.error(
+        language === 'ar'
+          ? 'فشل حفظ التحليل'
+          : language === 'fr'
+          ? 'Échec de l\'enregistrement'
+          : 'Failed to save analysis'
+      );
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const handleExportPdf = () => {
@@ -330,6 +375,24 @@ const AnalysisViewer = ({ images, onReset }: AnalysisViewerProps) => {
                 : language === 'fr'
                 ? 'Effacer les surbrillances'
                 : 'Clear highlights on image'}
+            </Button>
+
+            <Button
+              variant="outline"
+              className="flex-1 h-12 glass border-border/60"
+              onClick={saveAnalysis}
+              disabled={isSaving}
+            >
+              {isSaving ? (
+                <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+              ) : (
+                <Save className="mr-2 h-5 w-5" />
+              )}
+              {language === 'ar'
+                ? 'حفظ التحليل'
+                : language === 'fr'
+                ? 'Enregistrer'
+                : 'Save Analysis'}
             </Button>
 
             <Button 

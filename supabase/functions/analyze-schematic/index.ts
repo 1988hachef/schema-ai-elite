@@ -210,10 +210,44 @@ Be precise, professional, and very detailed in each part. Use colored and bold s
     }
 
     const data = await response.json();
-    const content = data.choices[0].message.content;
+    let content = data.choices[0].message.content;
+
+    // Clean the content: remove ##, ***, and question/command phrases
+    content = content
+      .replace(/#{1,6}\s*/g, '') // Remove markdown headers ##
+      .replace(/\*{1,3}/g, '') // Remove *** emphasis
+      .replace(/^[؟?].*$/gm, '') // Remove lines starting with questions
+      .replace(/(قم ب|يجب|افعل|اشرح|حدد|قدم|ابدأ)[^.!?]*[.!?]/gi, '') // Remove Arabic commands
+      .replace(/(Expliquez|Décrivez|Fournissez|Mentionnez|Commencez)[^.!?]*[.!?]/gi, '') // Remove French commands
+      .replace(/(Explain|Describe|Provide|Mention|Start|Begin)[^.!?]*[.!?]/gi, ''); // Remove English commands
+
+    // Function to format component names with colors and bold
+    const formatComponentNames = (text: string) => {
+      // Arabic component patterns
+      const arPatterns = [
+        /(\b(?:مقاوم|مكثف|ملف|ترانزستور|ديود|محول|مفتاح|مصباح|بطارية|محرك|مرحل|منصهر|قاطع|موصل)\b[^:]*?)(?=:|$)/gi,
+      ];
+      // French component patterns
+      const frPatterns = [
+        /(\b(?:Résistance|Condensateur|Bobine|Transistor|Diode|Transformateur|Interrupteur|Lampe|Batterie|Moteur|Relais|Fusible|Disjoncteur|Connecteur)\b[^:]*?)(?=:|$)/gi,
+      ];
+      // English component patterns
+      const enPatterns = [
+        /(\b(?:Resistor|Capacitor|Inductor|Transistor|Diode|Transformer|Switch|Lamp|Battery|Motor|Relay|Fuse|Circuit breaker|Connector)\b[^:]*?)(?=:|$)/gi,
+      ];
+
+      let formatted = text;
+      [...arPatterns, ...frPatterns, ...enPatterns].forEach(pattern => {
+        formatted = formatted.replace(pattern, '**<span style="color: #D4AF37; font-weight: bold;">$1</span>**');
+      });
+      
+      return formatted;
+    };
+
+    content = formatComponentNames(content);
 
     // Split content into sections based on markdown headers
-    const sectionRegex = /##\s+\d+\.\s+(.+?)\n([\s\S]*?)(?=##\s+\d+\.|$)/g;
+    const sectionRegex = /(\d+\.\s+.+?)\n([\s\S]*?)(?=\d+\.\s+|$)/g;
     const sections = [];
     const colors = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEAA7', '#DFE6E9', '#74B9FF'];
     

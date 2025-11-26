@@ -1,12 +1,16 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import DeveloperBrand from '@/components/DeveloperBrand';
 import LanguageSelector from '@/components/LanguageSelector';
 import InputButtons from '@/components/InputButtons';
 import AnalysisViewer from '@/components/AnalysisViewer';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { Button } from '@/components/ui/button';
+import { History } from 'lucide-react';
 
 const Index = () => {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
+  const navigate = useNavigate();
   const [selectedImages, setSelectedImages] = useState<File[]>([]);
 
   const handleReset = () => {
@@ -15,7 +19,16 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background carbon-texture">
-      <div className="fixed top-4 right-4 z-50 animate-slide-in">
+      <div className="fixed top-4 right-4 z-50 flex gap-3 animate-slide-in">
+        <Button
+          variant="outline"
+          size="icon"
+          className="glass border-primary/30 hover:border-primary hover:glow-gold"
+          onClick={() => navigate('/history')}
+          title={language === 'ar' ? 'التحليلات المحفوظة' : language === 'fr' ? 'Analyses enregistrées' : 'Saved Analyses'}
+        >
+          <History className="h-5 w-5" />
+        </Button>
         <LanguageSelector />
       </div>
 
