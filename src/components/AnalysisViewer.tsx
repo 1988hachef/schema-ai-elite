@@ -6,6 +6,8 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { supabase } from '@/integrations/supabase/client';
 import AudioNarration from './AudioNarration';
 import ChatInterface from './ChatInterface';
+import InteractiveVoiceAnalysis from './InteractiveVoiceAnalysis';
+import AnalysisCorrection from './AnalysisCorrection';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'sonner';
 
@@ -402,9 +404,17 @@ const AnalysisViewer = ({ images, onReset }: AnalysisViewerProps) => {
               <Download className="mr-2 h-5 w-5" />
               {t.export}
             </Button>
+            
+            <AnalysisCorrection 
+              currentAnalysis={analysis}
+              onCorrected={setAnalysis}
+            />
           </div>
 
           <AudioNarration sections={analysis} />
+          <InteractiveVoiceAnalysis 
+            analysisContext={analysis.map(s => `${s.title}: ${s.content}`).join('\n\n')} 
+          />
           <ChatInterface analysisContext={analysis.map(s => `${s.title}: ${s.content}`).join('\n\n')} />
         </>
       )}
