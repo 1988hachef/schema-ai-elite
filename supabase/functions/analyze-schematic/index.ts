@@ -212,14 +212,25 @@ Be precise, professional, and very detailed in each part. Use colored and bold s
     const data = await response.json();
     let content = data.choices[0].message.content;
 
-    // Clean the content: remove ##, ***, and question/command phrases
+    // Clean the content: remove all markdown symbols and make it professional
     content = content
       .replace(/#{1,6}\s*/g, '') // Remove markdown headers ##
-      .replace(/\*{1,3}/g, '') // Remove *** emphasis
+      .replace(/\*\*\*/g, '') // Remove triple asterisks
+      .replace(/\*\*/g, '') // Remove double asterisks (bold)
+      .replace(/\*/g, '') // Remove single asterisks
+      .replace(/`{3}[\s\S]*?`{3}/g, '') // Remove code blocks ```
+      .replace(/`[^`]*`/g, '') // Remove inline code `
+      .replace(/\[([^\]]+)\]\([^\)]+\)/g, '$1') // Remove markdown links
+      .replace(/^>\s*/gm, '') // Remove blockquotes
+      .replace(/^\s*[-+*]\s+/gm, '• ') // Convert list markers to bullets
+      .replace(/^\s*\d+\.\s+/gm, '') // Remove numbered list markers
+      .replace(/_{2,}/g, '') // Remove underscores
+      .replace(/~{2}/g, '') // Remove strikethrough ~~
+      .replace(/\|/g, '') // Remove table pipes
       .replace(/^[؟?].*$/gm, '') // Remove lines starting with questions
-      .replace(/(قم ب|يجب|افعل|اشرح|حدد|قدم|ابدأ)[^.!?]*[.!?]/gi, '') // Remove Arabic commands
-      .replace(/(Expliquez|Décrivez|Fournissez|Mentionnez|Commencez)[^.!?]*[.!?]/gi, '') // Remove French commands
-      .replace(/(Explain|Describe|Provide|Mention|Start|Begin)[^.!?]*[.!?]/gi, ''); // Remove English commands
+      .replace(/^\s*[-=]{3,}\s*$/gm, '') // Remove horizontal rules
+      .replace(/\n{3,}/g, '\n\n') // Normalize multiple newlines
+      .trim();
 
     // Function to format component names with colors and bold
     const formatComponentNames = (text: string) => {
