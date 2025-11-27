@@ -5,7 +5,6 @@ import { ArrowLeft } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import SavedAnalyses from '@/components/SavedAnalyses';
 import AnalysisViewer from '@/components/AnalysisViewer';
-import DeveloperBrand from '@/components/DeveloperBrand';
 
 const History = () => {
   const { language } = useLanguage();
@@ -74,8 +73,6 @@ const History = () => {
           <SavedAnalyses onView={handleViewAnalysis} />
         )}
       </div>
-      
-      <DeveloperBrand />
     </div>
   );
 };
