@@ -407,7 +407,7 @@ const AnalysisViewer = ({ images, onReset }: AnalysisViewerProps) => {
             
             <AnalysisCorrection 
               currentAnalysis={analysis}
-              onCorrected={setAnalysis}
+              onCorrected={(corrected) => setAnalysis(corrected)}
             />
           </div>
 
