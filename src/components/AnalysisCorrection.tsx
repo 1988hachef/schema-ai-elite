@@ -7,8 +7,8 @@ import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 
 interface AnalysisCorrectionProps {
-  currentAnalysis: { title: string; content: string }[];
-  onCorrected: (correctedAnalysis: { title: string; content: string }[]) => void;
+  currentAnalysis: { title: string; content: string; color: string }[];
+  onCorrected: (correctedAnalysis: { title: string; content: string; color: string }[]) => void;
 }
 
 const AnalysisCorrection = ({ currentAnalysis, onCorrected }: AnalysisCorrectionProps) => {
@@ -77,11 +77,13 @@ const AnalysisCorrection = ({ currentAnalysis, onCorrected }: AnalysisCorrection
       // Parse corrected analysis
       const correctedText = data.response;
       const sections = correctedText.split('\n\n').filter(s => s.trim());
-      const correctedAnalysis = sections.map(section => {
+      const correctedAnalysis = sections.map((section, index) => {
         const lines = section.split('\n');
+        const colors = ['#D4AF37', '#00D4FF', '#FF6B6B', '#4ECDC4', '#FFD93D'];
         return {
           title: lines[0].replace(/[#*]/g, '').trim(),
-          content: lines.slice(1).join('\n').trim()
+          content: lines.slice(1).join('\n').trim(),
+          color: colors[index % colors.length]
         };
       });
 
