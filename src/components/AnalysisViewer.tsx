@@ -245,25 +245,14 @@ const AnalysisViewer = ({ images, onReset }: AnalysisViewerProps) => {
               margin-bottom: 24px;
               font-style: italic;
             }
-            .developer-brand {
-              font-size: 12px;
-              font-weight: 600;
-              color: #D4AF37;
-              text-align: center;
-              margin: 24px 0;
-              letter-spacing: 0.5px;
-            }
           </style>
         </head>
         <body>
-          <div class="developer-brand">DEVELOPED BY HACHEF OUSSAMA</div>
           <h1>${t.appName}</h1>
           <p class="subtitle">${language === 'ar' ? 'تحليل بواسطة المهندس الكهربائي HACHEF OUSSAMA' : language === 'fr' ? 'Analysé par l\'ingénieur électricien HACHEF OUSSAMA' : 'Analyzed by Electrical Engineer HACHEF OUSSAMA'}</p>
           ${imagesHtml}
           <hr style="border:none;border-top:2px solid #D4AF37;margin:32px 0;" />
           ${sectionsHtml}
-          <hr style="border:none;border-top:2px solid #D4AF37;margin:32px 0;" />
-          <div class="developer-brand">DEVELOPED BY HACHEF OUSSAMA</div>
         </body>
       </html>
     `);
