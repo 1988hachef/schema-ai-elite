@@ -213,6 +213,16 @@ Be precise, professional, and very detailed in each part. Use colored and bold s
       const error = await response.text();
       console.error('HuggingFace API Error:', error);
       
+      // Parse error details if possible
+      let errorMessage = '';
+      try {
+        const errorData = JSON.parse(error);
+        errorMessage = errorData.error || error;
+      } catch {
+        errorMessage = error;
+      }
+      
+      // Handle specific error cases with clear messages
       if (response.status === 503) {
         return new Response(
           JSON.stringify({ 
@@ -229,7 +239,54 @@ Be precise, professional, and very detailed in each part. Use colored and bold s
         );
       }
       
-      throw new Error('AI analysis failed');
+      if (response.status === 401 || response.status === 403 || errorMessage.includes('permissions') || errorMessage.includes('authentication')) {
+        return new Response(
+          JSON.stringify({ 
+            error: language === 'ar' 
+              ? 'مفتاح HuggingFace API غير صالح أو لا يملك صلاحيات "Inference Providers". يرجى إنشاء مفتاح جديد من: https://huggingface.co/settings/tokens'
+              : language === 'fr'
+              ? 'La clé HuggingFace API est invalide ou ne dispose pas des permissions "Inference Providers". Veuillez créer une nouvelle clé sur: https://huggingface.co/settings/tokens'
+              : 'HuggingFace API key is invalid or lacks "Inference Providers" permissions. Please create a new key at: https://huggingface.co/settings/tokens',
+            details: errorMessage
+          }),
+          { 
+            status: 401,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+          }
+        );
+      }
+      
+      if (response.status === 429) {
+        return new Response(
+          JSON.stringify({ 
+            error: language === 'ar' 
+              ? 'تم تجاوز حد الاستخدام. يرجى الانتظار قليلاً ثم المحاولة مرة أخرى.'
+              : language === 'fr'
+              ? 'Limite d\'utilisation dépassée. Veuillez attendre un moment puis réessayer.'
+              : 'Rate limit exceeded. Please wait a moment and try again.'
+          }),
+          { 
+            status: 429,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+          }
+        );
+      }
+      
+      // Generic error with details
+      return new Response(
+        JSON.stringify({ 
+          error: language === 'ar' 
+            ? 'فشل التحليل. يرجى التحقق من إعدادات HuggingFace API.'
+            : language === 'fr'
+            ? 'Échec de l\'analyse. Veuillez vérifier les paramètres de l\'API HuggingFace.'
+            : 'Analysis failed. Please check HuggingFace API settings.',
+          details: errorMessage
+        }),
+        { 
+          status: response.status || 500,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        }
+      );
     }
 
     const data = await response.json();
