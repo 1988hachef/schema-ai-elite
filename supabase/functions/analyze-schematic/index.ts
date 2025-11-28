@@ -184,7 +184,7 @@ Be precise, professional, and very detailed in each part. Use colored and bold s
 
     const fullPrompt = systemPrompt[language as keyof typeof systemPrompt] + '\n\n' + userPrompt;
 
-    const response = await fetch('https://api-inference.huggingface.co/models/llava-hf/llava-v1.6-mistral-7b-hf', {
+    const response = await fetch('https://router.huggingface.co/models/llava-hf/llava-v1.6-mistral-7b-hf', {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${HUGGINGFACE_API_KEY}`,
