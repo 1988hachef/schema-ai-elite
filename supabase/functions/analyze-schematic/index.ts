@@ -206,6 +206,23 @@ Be precise, professional, and very detailed in each part. Use colored and bold s
     if (!response.ok) {
       const error = await response.text();
       console.error('AI API Error:', error);
+      
+      if (response.status === 402) {
+        return new Response(
+          JSON.stringify({ 
+            error: language === 'ar' 
+              ? 'نفد رصيد AI. الرجاء إضافة رصيد من Settings → Workspace → Usage'
+              : language === 'fr'
+              ? 'Crédits AI épuisés. Veuillez ajouter des crédits depuis Settings → Workspace → Usage'
+              : 'AI credits exhausted. Please add credits from Settings → Workspace → Usage'
+          }),
+          { 
+            status: 402,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+          }
+        );
+      }
+      
       throw new Error('AI analysis failed');
     }
 
