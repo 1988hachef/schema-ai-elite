@@ -59,7 +59,10 @@ const AnalysisViewer = ({ images, onReset }: AnalysisViewerProps) => {
         body: { images: imageData, language }
       });
 
-      if (error) throw error;
+      if (error) {
+        toast.error(data?.error || error.message);
+        throw error;
+      }
       
       setAnalysis(data.sections || []);
     } catch (error) {
