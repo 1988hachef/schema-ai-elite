@@ -12,11 +12,13 @@ serve(async (req) => {
 
   try {
     const { images, language } = await req.json();
-    const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
+    const HUGGINGFACE_API_KEY = Deno.env.get('HUGGINGFACE_API_KEY');
 
-    if (!LOVABLE_API_KEY) {
-      throw new Error('LOVABLE_API_KEY not configured');
+    if (!HUGGINGFACE_API_KEY) {
+      throw new Error('HUGGINGFACE_API_KEY not configured');
     }
+
+    console.log('Using HuggingFace Inference API (free tier) for analysis');
 
     const systemPrompt = {
       ar: `أنت مهندس كهرباء خبير متخصص في تحليل المخططات الكهربائية بمستوى احترافي عالي جداً. قم بتحليل المخططات الكهربائية بدقة ووضوح تام.
@@ -173,51 +175,48 @@ Explain in precise detail and with high professionalism step by step:
 Be precise, professional, and very detailed in each part. Use colored and bold sub-headings to organize information professionally.`
     };
 
-    const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
+    // Use HuggingFace vision model (llava) for image analysis
+    const userPrompt = language === 'ar' 
+      ? 'قم بتحليل هذا المخطط الكهربائي بدقة واحترافية عالية. اتبع البنية المحددة في التعليمات بالضبط: ابدأ بملخص شامل، ثم حدد جميع المكونات الكهربائية مع الموقع والوظيفة لكل منها، وأخيراً اشرح مبدأ العمل بالتفصيل. كن دقيقاً ومحترفاً في كل قسم.'
+      : language === 'fr'
+      ? 'Analysez ce schéma électrique avec une grande précision et professionnalisme. Suivez exactement la structure spécifiée dans les instructions: commencez par un résumé complet, puis identifiez tous les composants électriques avec l\'emplacement et la fonction de chacun, et enfin expliquez le principe de fonctionnement en détail. Soyez précis et professionnel dans chaque section.'
+      : 'Analyze this electrical schematic with high precision and professionalism. Follow exactly the structure specified in the instructions: start with a comprehensive summary, then identify all electrical components with location and function for each, and finally explain the operating principle in detail. Be precise and professional in each section.';
+
+    const fullPrompt = systemPrompt[language as keyof typeof systemPrompt] + '\n\n' + userPrompt;
+
+    const response = await fetch('https://api-inference.huggingface.co/models/llava-hf/llava-v1.6-mistral-7b-hf', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${LOVABLE_API_KEY}`,
+        'Authorization': `Bearer ${HUGGINGFACE_API_KEY}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'google/gemini-2.5-flash',
-        messages: [
-          {
-            role: 'system',
-            content: systemPrompt[language as keyof typeof systemPrompt] || systemPrompt.en
-          },
-          {
-            role: 'user',
-            content: [
-              {
-                type: 'text',
-                text: 'قم بتحليل هذا المخطط الكهربائي بدقة واحترافية عالية. اتبع البنية المحددة في التعليمات بالضبط: ابدأ بملخص شامل، ثم حدد جميع المكونات الكهربائية مع الموقع والوظيفة لكل منها، وأخيراً اشرح مبدأ العمل بالتفصيل. كن دقيقاً ومحترفاً في كل قسم. / Analysez ce schéma électrique avec une grande précision et professionnalisme. Suivez exactement la structure spécifiée dans les instructions: commencez par un résumé complet, puis identifiez tous les composants électriques avec l\'emplacement et la fonction de chacun, et enfin expliquez le principe de fonctionnement en détail. Soyez précis et professionnel dans chaque section. / Analyze this electrical schematic with high precision and professionalism. Follow exactly the structure specified in the instructions: start with a comprehensive summary, then identify all electrical components with location and function for each, and finally explain the operating principle in detail. Be precise and professional in each section.'
-              },
-              ...images.map((img: string) => ({
-                type: 'image_url',
-                image_url: { url: img }
-              }))
-            ]
-          }
-        ]
+        inputs: {
+          prompt: fullPrompt,
+          image: images[0] // HuggingFace processes one image at a time
+        },
+        parameters: {
+          max_new_tokens: 2000,
+          temperature: 0.7
+        }
       }),
     });
 
     if (!response.ok) {
       const error = await response.text();
-      console.error('AI API Error:', error);
+      console.error('HuggingFace API Error:', error);
       
-      if (response.status === 402) {
+      if (response.status === 503) {
         return new Response(
           JSON.stringify({ 
             error: language === 'ar' 
-              ? 'نفد رصيد AI. الرجاء إضافة رصيد من Settings → Workspace → Usage'
+              ? 'النموذج قيد التحميل. يرجى المحاولة مرة أخرى خلال دقيقة.'
               : language === 'fr'
-              ? 'Crédits AI épuisés. Veuillez ajouter des crédits depuis Settings → Workspace → Usage'
-              : 'AI credits exhausted. Please add credits from Settings → Workspace → Usage'
+              ? 'Le modèle est en cours de chargement. Veuillez réessayer dans une minute.'
+              : 'Model is loading. Please try again in a minute.'
           }),
           { 
-            status: 402,
+            status: 503,
             headers: { ...corsHeaders, 'Content-Type': 'application/json' }
           }
         );
@@ -227,7 +226,7 @@ Be precise, professional, and very detailed in each part. Use colored and bold s
     }
 
     const data = await response.json();
-    let content = data.choices[0].message.content;
+    let content = typeof data === 'string' ? data : data.generated_text || data[0]?.generated_text || '';
 
     // Clean the content: remove all markdown and programming symbols
     content = content

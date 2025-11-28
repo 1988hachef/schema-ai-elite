@@ -12,11 +12,13 @@ serve(async (req) => {
 
   try {
     const { message, language, history, context } = await req.json();
-    const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
+    const HUGGINGFACE_API_KEY = Deno.env.get('HUGGINGFACE_API_KEY');
 
-    if (!LOVABLE_API_KEY) {
-      throw new Error('LOVABLE_API_KEY not configured');
+    if (!HUGGINGFACE_API_KEY) {
+      throw new Error('HUGGINGFACE_API_KEY not configured');
     }
+
+    console.log('Using HuggingFace Inference API (free tier) for chat');
 
     const offTopicResponses = {
       ar: 'أنا متخصص فقط في المخططات الكهربائية',
@@ -53,34 +55,54 @@ serve(async (req) => {
       en: `You are an AI assistant acting as a professional electrical engineer, specialized ONLY in electrical schematics. Provide precise, technically detailed, well-structured answers at an engineer level (current paths, power/control circuits, protections, operating logic...), always grounded in the available analysis of the uploaded schematic. If asked who developed this app, answer: "This application was developed by HACHEF OUSSAMA". For any question outside electrical schematics, answer only: "I only specialize in electrical schematics".${contextPrompt}`
     };
 
-    const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
+    // Build conversation for HuggingFace format
+    const conversationText = [
+      systemPrompt[language as keyof typeof systemPrompt] || systemPrompt.en,
+      ...history.map((msg: any) => `${msg.role === 'user' ? 'User' : 'Assistant'}: ${msg.content}`),
+      `User: ${message}`,
+      'Assistant:'
+    ].join('\n\n');
+
+    const response = await fetch('https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.2', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${LOVABLE_API_KEY}`,
+        'Authorization': `Bearer ${HUGGINGFACE_API_KEY}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'google/gemini-2.5-flash',
-        messages: [
-          {
-            role: 'system',
-            content: systemPrompt[language as keyof typeof systemPrompt] || systemPrompt.en
-          },
-          ...history,
-          {
-            role: 'user',
-            content: message
-          }
-        ]
+        inputs: conversationText,
+        parameters: {
+          max_new_tokens: 1000,
+          temperature: 0.7,
+          return_full_text: false
+        }
       }),
     });
 
     if (!response.ok) {
+      const error = await response.text();
+      console.error('HuggingFace API Error:', error);
+      
+      if (response.status === 503) {
+        return new Response(
+          JSON.stringify({ 
+            error: language === 'ar' 
+              ? 'النموذج قيد التحميل. يرجى المحاولة مرة أخرى خلال دقيقة.'
+              : language === 'fr'
+              ? 'Le modèle est en cours de chargement. Veuillez réessayer dans une minute.'
+              : 'Model is loading. Please try again in a minute.'
+          }),
+          { 
+            status: 503,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+          }
+        );
+      }
       throw new Error('AI chat failed');
     }
 
     const data = await response.json();
-    const aiResponse = data.choices[0].message.content;
+    const aiResponse = typeof data === 'string' ? data : data.generated_text || data[0]?.generated_text || '';
 
     // Check if response is off-topic (simple heuristic)
     const electricalKeywords = ['circuit', 'schematic', 'voltage', 'current', 'resistor', 'capacitor', 
