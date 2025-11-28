@@ -175,30 +175,37 @@ Explain in precise detail and with high professionalism step by step:
 Be precise, professional, and very detailed in each part. Use colored and bold sub-headings to organize information professionally.`
     };
 
-    // Use HuggingFace vision model (llava) for image analysis
+    // Use HuggingFace vision model (LLaVA) via OpenAI-compatible chat API
     const userPrompt = language === 'ar' 
       ? 'قم بتحليل هذا المخطط الكهربائي بدقة واحترافية عالية. اتبع البنية المحددة في التعليمات بالضبط: ابدأ بملخص شامل، ثم حدد جميع المكونات الكهربائية مع الموقع والوظيفة لكل منها، وأخيراً اشرح مبدأ العمل بالتفصيل. كن دقيقاً ومحترفاً في كل قسم.'
       : language === 'fr'
-      ? 'Analysez ce schéma électrique avec une grande précision et professionnalisme. Suivez exactement la structure spécifiée dans les instructions: commencez par un résumé complet, puis identifiez tous les composants électriques avec l\'emplacement et la fonction de chacun, et enfin expliquez le principe de fonctionnement en détail. Soyez précis et professionnel dans chaque section.'
+      ? "Analysez ce schéma électrique avec une grande précision et professionnalisme. Suivez exactement la structure spécifiée dans les instructions: commencez par un résumé complet, puis identifiez tous les composants électriques avec l'emplacement et la fonction de chacun, et enfin expliquez le principe de fonctionnement en détail. Soyez précis et professionnel dans chaque section."
       : 'Analyze this electrical schematic with high precision and professionalism. Follow exactly the structure specified in the instructions: start with a comprehensive summary, then identify all electrical components with location and function for each, and finally explain the operating principle in detail. Be precise and professional in each section.';
 
-    const fullPrompt = systemPrompt[language as keyof typeof systemPrompt] + '\n\n' + userPrompt;
-
-    const response = await fetch('https://router.huggingface.co/llava-hf/llava-v1.6-mistral-7b-hf', {
+    const response = await fetch('https://router.huggingface.co/v1/chat/completions', {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${HUGGINGFACE_API_KEY}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        inputs: {
-          prompt: fullPrompt,
-          image: images[0] // HuggingFace processes one image at a time
-        },
-        parameters: {
-          max_new_tokens: 2000,
-          temperature: 0.7
-        }
+        model: 'llava-hf/llava-v1.6-mistral-7b-hf',
+        messages: [
+          {
+            role: 'system',
+            content: systemPrompt[language as keyof typeof systemPrompt] || systemPrompt.en,
+          },
+          {
+            role: 'user',
+            content: [
+              { type: 'text', text: userPrompt },
+              ...images.map((img: string) => ({
+                type: 'image_url',
+                image_url: { url: img },
+              })),
+            ],
+          },
+        ],
       }),
     });
 
@@ -226,7 +233,24 @@ Be precise, professional, and very detailed in each part. Use colored and bold s
     }
 
     const data = await response.json();
-    let content = typeof data === 'string' ? data : data.generated_text || data[0]?.generated_text || '';
+    const messageContent = data.choices?.[0]?.message?.content;
+    let content: string;
+
+    if (typeof messageContent === 'string') {
+      content = messageContent;
+    } else if (Array.isArray(messageContent)) {
+      content = messageContent
+        .map((part: any) =>
+          typeof part === 'string'
+            ? part
+            : typeof part?.text === 'string'
+            ? part.text
+            : ''
+        )
+        .join('\n');
+    } else {
+      content = '';
+    }
 
     // Clean the content: remove all markdown and programming symbols
     content = content
